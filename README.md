@@ -2,7 +2,7 @@
 ```Java``` ```Spring Boot``` ``` Maven``` ``` RestAPI``` ```H2DB```
 
 
-## Java Spring Boot: Stock Trades API   Back-end Developer
+## Java Spring Boot: Stock Trades API   Back-end Developer hackerrank Challenge
 
 In this challenge, you are part of a team building a brokerage company's accounts and trading management platform. One requirement is for a REST API service to manage trades using the Spring Boot framework. You will need to add functionality to add and delete transactions as well as to perform some queries. You'll be dealing with typical information for financial transactions like account ownership data, shares, price, transaction time, etc. The team has come up with a set of requirements including filtering and ordering requirements, response codes and error messages for the queries you must implement.
  
