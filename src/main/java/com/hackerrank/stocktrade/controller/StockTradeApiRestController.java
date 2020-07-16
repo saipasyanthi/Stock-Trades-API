@@ -1,5 +1,6 @@
 package com.hackerrank.stocktrade.controller;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -79,16 +80,16 @@ public class StockTradeApiRestController {
 
     
     @GetMapping("/stocks/stats") 
-    public ResponseEntity<JSONObject> getFluctuationsCount (
+    public ResponseEntity<JSONArray> getFluctuationsCount (
     	 @RequestParam(name = "start", required = false, defaultValue = "10-10-2017") @DateTimeFormat(pattern = "yyyy-MM-dd") Date start,
     	 @RequestParam(name = "end", required = false, defaultValue = "10-10-2017") @DateTimeFormat(pattern = "yyyy-MM-dd") Date end
 
     		) 
             throws RecordNotFoundException {
     	
-    	   JSONObject json= tradeService.getFluctuationsCount(start,end);
+    	   JSONArray json= tradeService.getFluctuationsCount(start,end);
     	 
-    		 return new ResponseEntity<JSONObject>(json,new HttpHeaders(), HttpStatus.OK);
+    		 return new ResponseEntity<JSONArray>(json,new HttpHeaders(), HttpStatus.OK);
     	   
     	  
     	    	

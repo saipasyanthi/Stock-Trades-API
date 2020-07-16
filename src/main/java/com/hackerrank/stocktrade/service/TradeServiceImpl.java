@@ -1,21 +1,15 @@
 package com.hackerrank.stocktrade.service;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import org.apache.commons.collections.MultiMap;
-import org.apache.commons.collections.map.MultiValueMap;
+
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpHeaders;
@@ -25,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import com.hackerrank.stocktrade.exception.RecordNotFoundException;
 import com.hackerrank.stocktrade.model.Trade;
-import com.hackerrank.stocktrade.model.User;
 import com.hackerrank.stocktrade.repository.TradeRepository;
 
 
@@ -116,31 +109,69 @@ public class TradeServiceImpl  implements TradeService{
 
 	@Override
 	
-	public JSONObject getFluctuationsCount(Date start, Date end) {
+	public JSONArray getFluctuationsCount(Date start, Date end) {
 	
 		List<Trade>  tradesfluctuations = tradeRepo.findByFluctuationsCount(start,end);
+
+
 				
-		 JSONObject json = new JSONObject();
-		 
-	     MultiMap multiMap = new MultiValueMap();
-	     
-		for(int i=0;i<tradesfluctuations.size();i++) {				
-			 
-		        multiMap.put(tradesfluctuations.get(i).getSymbol(), tradesfluctuations.get(i).getPrice());
-			}	
-		
-	     
-	        Set<String> keys = multiMap.keySet();
-	        
-	        for (String key : keys) {
-	            System.out.println("Key = " + key);
-	            System.out.println("Values = " + multiMap.get(key) + "n");
-	           
-	            List<Float> price = (ArrayList<Float>) multiMap.get(key);	
-	            
-	         //   System.out.println(price.get(1)); 
-	        }
-	        return null;
+		JSONArray json = new JSONArray();
+
+		Map<String, List<Trade>> tradesBySymbol = tradesfluctuations.stream().collect(Collectors.groupingBy(Trade::getSymbol));
+		Set<String> allSymbols = tradeRepo.findAllSymbols();
+		Set<String> queriedSymbols = tradesBySymbol.keySet();
+
+		allSymbols.removeAll(queriedSymbols);
+
+		for(String missingSymbol:allSymbols){
+			JSONObject symbolObject= new JSONObject();
+			symbolObject.put("stock",missingSymbol);
+			symbolObject.put("message", "There are no trades in the given date range");
+			json.add(symbolObject);
+		}
+
+		for(String symbol:tradesBySymbol.keySet()){
+			List<Trade> trades =  tradesBySymbol.get(symbol);
+			Collections.sort(trades);
+			double previousPrice = 0.0;
+			double max_rise = 0.0;
+			double max_fall = 0.0;
+			int fluctuations = 0;
+			boolean increased = false;
+			boolean decreased = false;
+			int i = 0;
+			for(Trade trade:trades){
+				if(i>0){
+					max_rise = (trade.getPrice() - previousPrice) > 0 && (trade.getPrice() - previousPrice) > max_rise ? (trade.getPrice() - previousPrice) : max_rise;
+					max_fall = (previousPrice - trade.getPrice()) > 0 && (previousPrice - trade.getPrice()) > max_fall ? (previousPrice - trade.getPrice()) : max_fall;
+				}
+
+				if(i>0 && previousPrice>trade.getPrice()){
+					decreased = true;
+				}else if(i>0 && previousPrice<trade.getPrice()){
+					increased = true;
+				}
+
+				if(increased && decreased){
+					fluctuations ++;
+					decreased = previousPrice>trade.getPrice()?true:false;
+					increased = previousPrice<trade.getPrice()?true:false;
+				}
+				previousPrice = trade.getPrice();
+				i++;
+			}
+
+			JSONObject symbolObject= new JSONObject();
+			symbolObject.put("stock",symbol);
+			symbolObject.put("max_rise",Math.round(max_rise * 100.0) / 100.0);
+			symbolObject.put("max_fall",Math.round(max_fall * 100.0) / 100.0);
+			symbolObject.put("fluctuations",fluctuations);
+
+			json.add(symbolObject);
+
+		}
+
+		return json;
 	}
 
 	

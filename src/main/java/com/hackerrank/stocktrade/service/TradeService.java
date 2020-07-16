@@ -3,12 +3,12 @@ package com.hackerrank.stocktrade.service;
 import java.util.Date;
 import java.util.List;
 
+import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.springframework.http.ResponseEntity;
 
 import com.hackerrank.stocktrade.exception.RecordNotFoundException;
 import com.hackerrank.stocktrade.model.Trade;
-import com.hackerrank.stocktrade.model.User;
 
 public interface TradeService {
 
@@ -22,7 +22,7 @@ public JSONObject getStocksPrice(String stockSymbol, Date startDate, Date endDat
 
 public void deleteAllTrades();
 
-public JSONObject getFluctuationsCount(Date start, Date end);
+public JSONArray getFluctuationsCount(Date start, Date end);
   
   
 }

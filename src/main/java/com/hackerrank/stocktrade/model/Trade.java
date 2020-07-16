@@ -21,7 +21,7 @@ import com.hackerrank.stocktrade.util.CustomDateAndTimeDeserialize;
 
 @Entity
 @Table(name = "Trade")
-public class Trade  implements Serializable  {
+public class Trade  implements Serializable,Comparable<Trade> {
 	
 	@Id
 	@Column(name = "id", unique = true, nullable = false)
@@ -117,5 +117,9 @@ public class Trade  implements Serializable  {
 	public void setPrice(Float price) {
 		this.price = price;
 	}
-    
+
+    @Override
+    public int compareTo(Trade o) {
+        return this.timestamp.compareTo(o.getTimestamp());
+    }
 }
