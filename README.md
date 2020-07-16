@@ -22,9 +22,9 @@ Each trade is a JSON entry with the following keys:
 * *price*: The price of one share of stock at the time of the trade (up to two places of decimal). The stock price is between 130.42 and 195.65 inclusive.
 * *timestamp*: The timestamp for the trade creation given in the format yyyy-MM-dd HH:mm:ss. The timezone is EST (UTC -4).
 
-
-```
 Sample JSON Trade object
+```
+
 {    "id": 1,   
     "type": "buy",
     "user": {       "id": 1, 
@@ -58,7 +58,9 @@ Sample JSON Trade object
 ### If there are no trades for the requested stock symbol, then the response JSON should be:
 
 ```
-{   "message":"There are no trades in the given date range" }
+{  
+  "message":"There are no trades in the given date range"
+}
 ```
 
 6. *Returning the ﬂuctuations count, maximum daily rise and maximum daily fall for each stock symbol for the period in the given date range*: The service should be able to return the ﬂuctuations count, maximum daily rise and maximum daily fall for each stock symbol for the period in the given date range inclusive. This will be accomplished through a *GET* request at ```/stocks/stats?start= {startDate}&end={endDate}```. The response code should be *200*. The JSON array should be sorted in ascending order by the stock symbol.
@@ -88,7 +90,8 @@ Requests are received in the following order:
 Consider the following POST requests (these are performed in the ascending order of trade id):
 
 ```
-{  "id": 1,
+{  
+   "id": 1,
    "type": "buy",   
    "user": {      
        "id": 1,
@@ -96,7 +99,8 @@ Consider the following POST requests (these are performed in the ascending order
     "symbol": "AC", 
     "shares": 28,
     "price": 162.17,
-    "timestamp": "2014-06-14 13:13:13" }
+    "timestamp": "2014-06-14 13:13:13" 
+  }
 ```
 ```
 {    "id": 2,
